@@ -10,10 +10,11 @@ source("R/old_make_signatures.R")
 
 ### Create GMT File ###
 
-# Step 1: Make signatures and propagate
+# Step 1: Make signatures and propagate downstream
 sigs <- bugphyzz::physiologies(c("gram stain", "aerophilicity")) 
 sigs <- lapply(sigs, make_signatures, taxids = "NCBI_ID") %>% 
-      unlist(recursive = F)
+      unlist(recursive = F) %>% 
+      lapply(unique)
 sigs <- sigs %>% 
       lapply(taxizedb::children, db = "ncbi") %>% 
       lapply(data.table::rbindlist) %>% 
