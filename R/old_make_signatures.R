@@ -5,10 +5,16 @@ make_signatures <- function(df, taxids = "Taxon_name", rank = "all"){
       return(dat)
 }
 
-fetch_bugs <- function(attribute_name, dat, taxids = "Taxon_name"){
-      bugs <- c(dat[dat[["Attribute"]] == attribute_name,])
+fetch_bugs <- function(attribute_name, dat, taxids){
+      bugs <- dat[dat[["Attribute"]] == attribute_name,] %>% 
+            filter(Attribute_value == TRUE | Attribute_value == "TRUE") %>% 
+            c()
+      
       bugs <- bugs[[taxids]]
-      return(bugs[!is.na(bugs)])
+      if(length(bugs)==0){
+            return (NULL)
+      }
+      else return(bugs[!is.na(bugs)])
 }
 
 get_Genus <- function(MetaPhlAn){
