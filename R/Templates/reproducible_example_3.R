@@ -15,10 +15,13 @@ sigs <- bugphyzz::physiologies(c("gram stain", "aerophilicity"))
 sigs <- lapply(sigs, make_signatures, taxids = "NCBI_ID") %>% 
       unlist(recursive = F) %>% 
       lapply(unique)
-sigs <- sigs %>% 
+children <- sigs %>% 
       lapply(taxizedb::children, db = "ncbi") %>% 
       lapply(data.table::rbindlist) %>% 
       lapply(dplyr::pull, id)
+sigs <- list(children, sigs) %>% 
+      unlist(recursive=F) 
+sigs <- tapply(unlist(sigs, use.names = FALSE), rep(names(sigs), lengths(sigs)), FUN = c)
 
 # Write the signatures to a GMT data structure and load it into R environment
 EnrichmentBrowser::writeGMT(sigs, gmt.file = "my.gmt")
